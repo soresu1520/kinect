@@ -1,0 +1,49 @@
+﻿<Grid Name="LayoutRoot">
+	<Path Name="FillPath" Stretch="Fill" Data="F1 M 113.302,91.7188C 113.302,103.641 
+    103.642,113.299 91.7213,113.299L 21.582,113.299C 9.66146,113.299 7.62939e-006,103.641
+        	7.62939e-006,91.7188L 7.62939e-006,21.5821C 7.62939e-006,9.66148 
+	9.66146,2.47955e-005 21.582,2.47955e-005L 91.7213,2.47955e-005C 103.642,
+	2.47955e-005 113.302,9.66148
+         113.302,21.5821L 113.302,91.7188 Z " Margin="8,8,0,0" Height="113"
+	HorizontalAlignment="Left" Width="113" VerticalAlignment="Top"
+	Fill="{Binding PathFill}">
+	</Path>
+
+	<Rectangle Name="Mask" Fill="White" Height="121" VerticalAlignment="Top"
+	HorizontalAlignment="Left" Width="129" RenderTransformOrigin="0.5,0.5" >
+	</Rectangle>
+
+	<Path Name="BorderPath" Stretch="Fill" StrokeThickness="0.591467"
+	StrokeLineJoin="Round" Stroke="#FF777677"
+	Data="F1 M 121.384,99.8022C 121.384,111.724 111.724,121.383
+            99.8035,121.383L 29.6642,121.383C 17.7436,121.383 8.08218,111.724 
+	8.08218,99.8022L 8.08218,29.6655C 8.08218,17.745 17.7436,8.0835 
+	29.6642,8.0835L 99.8035,8.0835C
+       	111.724,8.0835 121.384,17.745 121.384,29.6655L 121.384,
+	99.8022 Z M 104.624,0.295738L 24.8439,0.295738C 11.2853,
+	0.295738 0.295734,11.2866 0.295734,24.8439L
+       	0.295734,104.624C 0.295734,118.181 11.2853,129.172 24.8439,
+	129.172L 104.624,129.172C 118.181,129.172 129.172,118.181 129.172,
+	104.624L 129.172,24.8439C
+        	129.172,11.2866 118.181,0.295738 104.624,0.295738 Z "
+	HorizontalAlignment="Left" Width="129" Height="129" VerticalAlignment="Top">
+		<Path.Fill>
+			<LinearGradientBrush StartPoint="0.5,6.51193e-007" EndPoint="0.5,1">
+				<LinearGradientBrush.GradientStops>
+					<GradientStop Color="#FFDED9D2" Offset="0" />
+					<GradientStop Color="#FF858681" Offset="0.154192" />
+					<GradientStop Color="#FF2D3330" Offset="0.26404" />
+					<GradientStop Color="#FF969997" Offset="0.383313" />
+					<GradientStop Color="#FFFFFFFF" Offset="0.57303" />
+					<GradientStop Color="#FF7F7F7F" Offset="0.735806" />
+					<GradientStop Color="#FF000000" Offset="1" />
+				</LinearGradientBrush.GradientStops>
+			</LinearGradientBrush>
+		</Path.Fill>
+	</Path>
+
+	<TextBlock Name="txtHeader" Text="{Binding DisplayText}"
+	Foreground="{Binding DisplayTextColor}" TextAlignment="Center"
+	TextWrapping="WrapWithOverflow" FontSize="38"
+VerticalAlignment="Center" HorizontalAlignment="Center" />
+</Grid>
