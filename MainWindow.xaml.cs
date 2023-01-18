@@ -1,4 +1,4 @@
-﻿//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // <copyright file="MainWindow.xaml.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
@@ -21,12 +21,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
     using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Shapes;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+
+
         /// <summary>
         /// Radius of drawn hand circles
         /// </summary>
@@ -146,6 +149,15 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
         private int points;
 
+        private Boolean aboveFlag = false;
+        private Boolean inFlag = false;
+        private Boolean belowFlag = false;
+
+        private int timerCount = 1000;
+
+        private int distanceFormScreen = 70;
+        private int addDistance = 10;
+
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
@@ -236,7 +248,11 @@ namespace Microsoft.Samples.Kinect.BodyBasics
             // initialize the components (controls) of the window
             this.InitializeComponent();
 
-            Square square = new Square(new Rect(r.Next(0, this.displayWidth-50), r.Next(0, this.displayHeight-50), this.squareSize, this.squareSize), TypeSquare.Up);
+            this.squareX = r.Next(0, this.displayWidth-this.squareSize-this.distanceFormScreen);
+            this.squareY = r.Next(0, this.displayHeight-this.squareSize-this.distanceFormScreen);
+
+            Square square = new Square(new Rect(this.squareX, this.squareY, this.squareSize, this.squareSize), TypeSquare.Up);
+            //Square square = new Square(new Rect(300, 100, this.squareSize, this.squareSize), TypeSquare.Down);
             //Square square2 = new Square(new Rect(r.Next(0, this.displayWidth), r.Next(0, this.displayHeight), 50, 50), TypeSquare.Up);
 
             this.squares.Add(square);
@@ -327,15 +343,16 @@ namespace Microsoft.Samples.Kinect.BodyBasics
         /// <param name="e">event arguments</param>
         private void Reader_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
         {
-            Console.WriteLine("WHATEVER");
+            //Trace.WriteLine("WHATEVER");
             bool dataReceived = false;
 
-            if (this.counter == 100)
+            
+            if (this.counter == 2000)
             {
                 this.squares.Remove(this.squares[0]);
                 this.counter = 0;
-                this.squareX = r.Next(0, this.displayWidth-50);
-                this.squareY = r.Next(0, this.displayHeight-50);
+                this.squareX = r.Next(0, this.displayWidth-this.squareSize-this.distanceFormScreen);
+                this.squareY = r.Next(0, this.displayHeight-this.squareSize-this.distanceFormScreen);
                 this.squares.Add(new Square(new Rect(squareX, squareY, 50, 50), TypeSquare.Up));
             }
 
@@ -410,11 +427,132 @@ namespace Microsoft.Samples.Kinect.BodyBasics
 
                             //KINDA WORKS
                             dc.DrawRectangle(Brushes.Pink, null, new Rect(jointPoints[JointType.HandRight].X, 
-                                jointPoints[JointType.HandRight].X, 20, 20));
+                                jointPoints[JointType.HandRight].Y, 20, 20));
 
-                            //getting position doesn't work
-                            //positionRightHandY = body.Joints[JointType.WristRight].Position.Y;
-                            //dc.DrawRectangle(Brushes.Pink, null, new Rect(positionRightHandY, positionRightHandY, 20, 20));
+                            //POZYCJE
+                            double xHandRight = jointPoints[JointType.WristRight].X;
+                            double yHandRight = jointPoints[JointType.WristRight].Y;
+                            double xHandLeft = jointPoints[JointType.WristLeft].X;
+                            double yHandLeft = jointPoints[JointType.WristLeft].Y;
+
+                            //DO USUNIĘCIA POTEM
+                            //this.squareX = 300;
+                            //this.squareY=150;
+
+                            //BOOLEANS
+                            //right hand in square
+                            Boolean rightHandPositionX = xHandRight >= this.squareX && xHandRight <= (this.squareX + this.squareSize);
+                            Boolean rightHandPositionY = yHandRight <= this.squareY && yHandRight >= (this.squareY - this.squareSize);
+                            Boolean leftHandPositionX = xHandLeft >= this.squareX && xHandLeft <= (this.squareX + this.squareSize);
+                            Boolean leftHandPositionY = yHandLeft <= this.squareY && yHandLeft >= (this.squareY - this.squareSize);
+
+                            //right hand above square
+                            Boolean rightHandAboveY = yHandRight <= (this.squareY - this.squareSize);
+                            Boolean leftHandAboveY = yHandLeft <= (this.squareY - this.squareSize);
+                            //right hand below square
+                            Boolean rightHandBelowY = yHandRight >= this.squareY;
+                            Boolean leftHandBelowY = yHandLeft >= this.squareY;
+
+                            //Trace.WriteLine("Hand: " + " : " + yHandRight + " ; Square: " + this.squareY + " If: " + rightHandPositionY);
+
+                            //WARUNKI
+                            //if(rightHandPositionX && rightHandPositionY)
+                           // {
+                             //   Trace.WriteLine("HAND IN SQUARE");
+                            //}
+
+                            //DOWN (reka idzie z gory na dol) 
+                            if (this.squares[0].typeSquare == TypeSquare.Down)
+                            {
+
+                                if((rightHandAboveY && rightHandPositionX) || (leftHandAboveY && leftHandPositionX))
+                                {
+                                    Trace.WriteLine("Reka nad kwadratem DOWN");
+                                    this.aboveFlag = true;
+                                }
+
+                                if ((this.aboveFlag && rightHandPositionX && rightHandPositionY) || (this.aboveFlag && leftHandPositionX && leftHandPositionY))
+                                 {
+                                    Trace.WriteLine("Ręka w kwadracie DOWN ");
+                                    this.inFlag = true;
+                                 }
+
+                                if(this.inFlag && ((rightHandPositionX && rightHandBelowY) || (leftHandPositionX && leftHandBelowY)))
+                                {
+                                    Trace.WriteLine("Reka pod kwadratem DOWN");
+                                    this.belowFlag = true;
+                                }
+
+                                if( this.aboveFlag && this.inFlag && this.belowFlag)
+                                {
+                                    Trace.WriteLine("Zbity kwadrat DOWN");
+                                    this.aboveFlag = false;
+                                    this.inFlag = false;
+                                    this.belowFlag = false;
+                                    
+                                    this.squares.Remove(this.squares[0]);
+                                    this.counter = 0;
+                                    this.squareX = r.Next(0, this.displayWidth-this.squareSize-this.distanceFormScreen);
+                                    this.squareY = r.Next(0, this.displayHeight-this.squareSize-this.distanceFormScreen);
+                                    this.squares.Add(new Square(new Rect(squareX, squareY, this.squareSize, this.squareSize), TypeSquare.Down));
+                                }
+
+                                if(!rightHandPositionX && !leftHandPositionX)
+                                {
+                                    this.aboveFlag = false;
+                                    this.inFlag = false;
+                                    this.belowFlag = false;
+                                }
+
+                            }
+
+
+                            //UP 
+                            if (this.squares[0].typeSquare == TypeSquare.Up)
+                            {
+
+                                if((rightHandPositionX && rightHandBelowY) || (leftHandPositionX && leftHandBelowY))
+                                {
+                                    Trace.WriteLine("Reka pod kwadratem UP");
+                                    this.belowFlag = true;
+                                }
+
+                                if ((this.belowFlag && rightHandPositionX && rightHandPositionY) || (this.belowFlag && leftHandPositionX && leftHandPositionY))
+                                 {
+                                    Trace.WriteLine("Ręka w kwadracie UP ");
+                                    this.inFlag = true;
+                                 }
+
+                                if(this.inFlag && ((rightHandAboveY && rightHandPositionX) || (leftHandPositionX && leftHandAboveY)))
+                                {
+                                    Trace.WriteLine("Reka nad kwadratem UP");
+                                    this.aboveFlag = true;
+                                }
+
+                                if( this.aboveFlag && this.inFlag && this.belowFlag)
+                                {
+                                    Trace.WriteLine("Zbity kwadrat UP");
+                                    this.aboveFlag = false;
+                                    this.inFlag = false;
+                                    this.belowFlag = false;
+                                    
+                                    this.squares.Remove(this.squares[0]);
+                                    this.counter = 0;
+                                    this.squareX = r.Next(0, this.displayWidth-this.squareSize-this.distanceFormScreen);
+                                    this.squareY = r.Next(0, this.displayHeight-this.squareSize-this.distanceFormScreen);
+                                    this.squares.Add(new Square(new Rect(squareX, squareY, this.squareSize, this.squareSize), TypeSquare.Up));
+                                }
+
+                                if(!rightHandPositionX && !leftHandPositionX)
+                                {
+                                    this.aboveFlag = false;
+                                    this.inFlag = false;
+                                    this.belowFlag = false;
+                                }
+                                
+                               
+                            }
+
 
 
                         }
