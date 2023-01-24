@@ -1,0 +1,136 @@
+Niewłaściwe rysowanie kwadratów
+251-252
+this.squareX = r.Next(this.distanceFormScreen, this.displayWidth-this.squareSize-this.distanceFormScreen);
+this.squareY = r.Next(this.distanceFormScreen, this.displayHeight-this.squareSize-this.distanceFormScreen);
+
+Losowanie orientacji
+ private TypeSquare randomOrientation()
+        {
+            TypeSquare orientation;
+            int random = r.Next(0, 4);
+            Trace.WriteLine(random);
+
+            if (random == 0) { orientation = TypeSquare.Left}
+            else if (random==1) { orientation = TypeSquare.Right}
+            else if (random == 2) { orientation = TypeSquare.Up}
+            else if (random == 3) { orientation = TypeSquare.Down}
+
+            return orientation;
+        }
+
+
+Warunki
+                            //hand on the left of the square
+                            Boolean rightHandLeftX = xHandRight <= this.squareX;
+                            Boolean leftHandLeftX = yHandLeft <= this.squareX;
+                            Boolean rightHandLeftY = rightHandPositionY;
+                            Boolean leftHandLeftY = leftHandPositionY;
+
+                            //hand on the right of the square
+                            Boolean rightHandRightX = xHandRight >= this.squareX + this.squareSize;
+                            Boolean leftHandRightX = xHandLeft >= this.squareX + this.squareSize;
+                            Boolean rightHandRightY = rightHandPositionY;
+                            Boolean leftHandRightY = leftHandPositionY;
+
+
+
+
+                            //RIGHT
+                            //ręka idzie z lewej do prawej (z naszej perspektywy)
+                            if (this.squares[0].typeSquare == TypeSquare.Right)
+                            {
+
+                                if((rightHandPositionY && rightHandLeftX) || (leftHandPositionY && leftHandLeftX))
+                                {
+                                    Trace.WriteLine("Ręka na lewo od kwadratu RIGHT");
+                                    this.leftFlag = true;
+                                }
+
+                                if(this.leftFlag && ((rightHandPositionX && rightHandPositionY) || (leftHandPositionX && leftHandPositionY))
+                                {
+                                    Trace.WriteLine("Ręka w kwadracie RIGHT");
+                                    this.inFlag = true;
+                                }
+
+                                if(this.inFlag && ((rightHandPositionY && rightHandRightX) || (leftHandPositionY && leftHandRightX))
+                                {
+                                    Trace.WriteLine("Ręka po prawo od kwadratu RIGHT");
+                                    this.rightFlag = true;
+                                }
+
+                                if(this.leftFlag && this.inFlag && this.rightFlag)
+                                {
+                                    Trace.WriteLine("Zbity kwadrat RIGHT");
+                                    this.leftFlag = false;
+                                    this.inFlag = false;
+                                    this.rightFlag = false;
+
+                                    this.squares.Remove(this.squares[0]);
+                                    this.counter = 0;
+                                    //to zmienić jak tam wyżej to zadziała
+                                    this.squareX = r.Next(0, this.displayWidth - this.squareSize - this.distanceFormScreen);
+                                    this.squareY = r.Next(0, this.displayHeight - this.squareSize - this.distanceFormScreen);
+                                    this.squares.Add(new Square(new Rect(squareX, squareY, this.squareSize, this.squareSize), TypeSquare.Right));
+                                }
+
+                                //nie wiem co to ma tutaj robić
+                                if (!rightHandPositionX && !leftHandPositionX)
+                                {
+                                    this.aboveFlag = false;
+                                    this.inFlag = false;
+                                    this.belowFlag = false;
+                                }
+
+                            }
+
+                            //LEFT
+                            //ręka idzie z prawej do lewej (z naszej perspektywy)
+                            if (this.squares[0].typeSquare == TypeSquare.Left)
+                            {
+
+                                if((rightHandPositionY && rightHandRightX) || (leftHandPositionY && leftHandRightX))
+                                {
+                                    Trace.WriteLine("Ręka po prawo od kwadratu LEFT");
+                                    this.rightFlag = true;
+                                }
+
+                                if(this.rightFlag && ((rightHandPositionX && rightHandPositionY) || (leftHandPositionX && leftHandPositionY))
+                                {
+                                    Trace.WriteLine("Ręka w kwadracie LEFT");
+                                    this.inFlag = true;
+                                }
+
+                                if (this.inFlag && ((rightHandPositionY && rightHandLeftX) || (leftHandPositionY && leftHandLeftX))
+                                {
+                                    Trace.WriteLine("Ręka po lewo od kwadratu RIGHT");
+                                    this.leftFlag = true;
+                                }
+
+                                if (this.leftFlag && this.inFlag && this.rightFlag)
+                                {
+                                    Trace.WriteLine("Zbity kwadrat LEFT");
+                                    this.leftFlag = false;
+                                    this.inFlag = false;
+                                    this.rightFlag = false;
+
+                                    this.squares.Remove(this.squares[0]);
+                                    this.counter = 0;
+                                    //to zmienić jak tam wyżej to zadziała
+                                    this.squareX = r.Next(0, this.displayWidth - this.squareSize - this.distanceFormScreen);
+                                    this.squareY = r.Next(0, this.displayHeight - this.squareSize - this.distanceFormScreen);
+                                    this.squares.Add(new Square(new Rect(squareX, squareY, this.squareSize, this.squareSize), TypeSquare.Right));
+                                }
+
+                                //nie wiem co to ma tutaj robić
+                                if (!rightHandPositionX && !leftHandPositionX)
+                                {
+                                    this.aboveFlag = false;
+                                    this.inFlag = false;
+                                    this.belowFlag = false;
+                                }
+                            }
+
+
+
+
+
